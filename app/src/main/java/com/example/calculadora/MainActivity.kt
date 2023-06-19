@@ -45,7 +45,7 @@ class MainActivity : ComponentActivity() {
                     mutableStateOf("")
                 }
 
-
+                // esto es un comentario de prueba.
                 val delimitadores = arrayOf("+", "-", "*", "/")
 
                 fun resultado (int: Int, int1: Int, simbol: Char){
@@ -228,6 +228,7 @@ class MainActivity : ComponentActivity() {
                                     // comando para volver al ultimo estado guardado:
                                     // git reset --hard
 
+                                    // Hi2
 
                                     for (char in entradas){
                                         if (char == '+'){
