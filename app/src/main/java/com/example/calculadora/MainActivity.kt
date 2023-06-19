@@ -220,6 +220,12 @@ class MainActivity : ComponentActivity() {
                                     var parte2 = splitter1[1].toInt()
 
 
+                                    // quiero guardar este comentario.
+                                    // git add .
+                                    // git commit -m "esto es el comentario del commit"
+                                    // git status se usa para ver el estado actual
+
+
                                     for (char in entradas){
                                         if (char == '+'){
                                             resultado(parte1, parte2, char)
