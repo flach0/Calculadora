@@ -225,6 +225,9 @@ class MainActivity : ComponentActivity() {
                                     // git commit -m "esto es el comentario del commit"
                                     // git status se usa para ver el estado actual
 
+                                    // comando para volver al ultimo estado guardado:
+                                    // git reset --hard
+
 
                                     for (char in entradas){
                                         if (char == '+'){
