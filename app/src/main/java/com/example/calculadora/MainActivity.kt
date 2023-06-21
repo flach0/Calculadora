@@ -48,21 +48,71 @@ class MainActivity : ComponentActivity() {
                 // esto es un comentario de prueba.
                 val delimitadores = arrayOf("+", "-", "*", "/")
 
-                fun resultado (int: Int, numero2: Int, simbol: Char){
+                fun tieneDecimales(numero: Double): Boolean {
+                    return numero % 1 != 0.0
+                }
 
-                    var opereitor = when{
-                        '+' == simbol -> int + numero2
-                        '-' == simbol -> int - numero2
-                        '*' == simbol -> int * numero2
-                        '/' == simbol -> int / numero2
+                fun resultado (numero1: Double, numero2: Double, simbol: Char): Double? {
 
-                        else -> println("chupala justin")
+                    var operator = when (simbol) {
+                        '+' -> numero1 + numero2
+                        '-' -> numero1 - numero2
+                        '*' -> numero1 * numero2
+                        '/' -> numero1 / numero2
+                        else -> {
+                            println("chupala justin")
+                            null
+                        }
+
                     }
-                    entradas = "$opereitor"
+                    return operator
+                }
+
+                fun comprobador (valor1: Double, valor2: Double): Boolean{
+
+                    return valor1.isFinite() && valor2.isFinite()
 
                 }
 
+                fun calculadora(){
 
+                    val spliter = entradas
+                    val splitter1 = spliter.split(*delimitadores)
+                    val parte1 = splitter1[0].toDouble()
+                    val parte2 = splitter1[1].toDouble()
+
+
+
+                    for (char in entradas){
+                        when (char) {
+                            '+' -> {
+                                entradas = ""
+                                entradas += resultado(parte1, parte2, char)
+                            }
+                            '-' -> {
+                                entradas = ""
+                                entradas += resultado(parte1, parte2, char)
+                            }
+                            '*' -> {
+                                entradas = ""
+                                entradas += resultado(parte1, parte2, char)
+                            }
+                            '/' -> {
+                                entradas = ""
+                                var res = resultado(parte1, parte2, char)
+                                if (res != null){
+                                    if (tieneDecimales(res)){
+                                        entradas += res.toString().take(4).toDouble()
+                                    }else {
+                                        entradas += res
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
+                }
 
                 Column(
                     modifier = Modifier
@@ -141,9 +191,7 @@ class MainActivity : ComponentActivity() {
                                 Text(text = "3")
                             }
                             Button(
-                                    onClick = {
-                                        entradas = ""
-                                    }
+                                    onClick = { entradas = "" }
                             ) {
                                 Text(text = "C")
                             }
@@ -165,7 +213,7 @@ class MainActivity : ComponentActivity() {
                                 Text(text = "6")
                             }
                             Button(
-                                onClick = { entradas += "*" }
+                                onClick = { if (entradas.isNotEmpty()) entradas += "*" }
                             ) {
                                 Text(text = "*")
                             }
@@ -187,37 +235,36 @@ class MainActivity : ComponentActivity() {
                                 Text(text = "9")
                             }
                             Button(
-                                onClick = { entradas += "/" }
+                                onClick = { if (entradas.isNotEmpty()) entradas += "/" }
                             ) {
                                 Text(text = "/")
                             }
                         }
                         Row(modifier = Modifier.background(color = Color.LightGray)) {
                             Button(
-                                onClick = {
-                                    entradas += "+"
-                                }
+                                onClick = {if (entradas.isNotEmpty()) entradas += "+" }
                             ) {
                                 Text(text = "+")
                             }
                             Button(
-                                onClick = { entradas += "0" }
+                                onClick = {if (entradas.isNotEmpty()) entradas += "0"}
                             ) {
                                 Text(text = "0")
                             }
                             Button(
-                                onClick = {
-                                    entradas += "-"
-                                }
+                                onClick = {if (entradas.isNotEmpty()) entradas += "-"}
                             ) {
                                 Text(text = "-")
                             }
                             Button(
                                 onClick = {
-                                    var spliter = entradas
-                                    var splitter1 = spliter.split(*delimitadores)
-                                    var parte1 = splitter1[0].toInt()
-                                    var parte2 = splitter1[1].toInt()
+
+                                    when {
+                                        entradas == "" -> entradas == ""
+                                        entradas.isNotEmpty() -> calculadora()
+
+                                        else -> entradas += ""
+                                    }
 
 
                                     // quiero guardar este comentario.
@@ -229,32 +276,16 @@ class MainActivity : ComponentActivity() {
                                     // git reset --hard
 
                                     // Hi2
-
-                                    for (char in entradas){
-                                        if (char == '+'){
-                                            resultado(parte1, parte2, char)
-                                        }else if (char == '-'){
-                                            resultado(parte1, parte2, char)
-                                        }else if (char == '*'){
-                                            resultado(parte1, parte2, char)
-                                        }else if (char == '/'){
-                                            resultado(parte1, parte2, char)
-                                        }
-
-                                    }
-
                                 }
                             ) {
                                 Text(text = "=")
                             }
                         }
-
-
                     }
                 }
-
-
             }
         }
     }
 }
+
+
