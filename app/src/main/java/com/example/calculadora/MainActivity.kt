@@ -48,13 +48,13 @@ class MainActivity : ComponentActivity() {
                 // esto es un comentario de prueba.
                 val delimitadores = arrayOf("+", "-", "*", "/")
 
-                fun resultado (int: Int, int1: Int, simbol: Char){
+                fun resultado (int: Int, numero2: Int, simbol: Char){
 
                     var opereitor = when{
-                        '+' == simbol -> int + int1
-                        '-' == simbol -> int - int1
-                        '*' == simbol -> int * int1
-                        '/' == simbol -> int / int1
+                        '+' == simbol -> int + numero2
+                        '-' == simbol -> int - numero2
+                        '*' == simbol -> int * numero2
+                        '/' == simbol -> int / numero2
 
                         else -> println("chupala justin")
                     }
