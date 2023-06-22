@@ -5,34 +5,22 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.calculadora.ui.theme.CalculadoraTheme
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 
 class MainActivity : ComponentActivity() {
@@ -47,6 +35,7 @@ class MainActivity : ComponentActivity() {
 
                 // esto es un comentario de prueba.
                 val delimitadores = arrayOf("+", "-", "*", "/")
+                val caracteres = charArrayOf('+', '-', '*', '/')
 
                 fun tieneDecimales(numero: Double): Boolean {
                     return numero % 1 != 0.0
@@ -68,50 +57,42 @@ class MainActivity : ComponentActivity() {
                     return operator
                 }
 
-                fun comprobador (valor1: Double, valor2: Double): Boolean{
 
-                    return valor1.isFinite() && valor2.isFinite()
-
-                }
 
                 fun calculadora(){
-
                     val spliter = entradas
                     val splitter1 = spliter.split(*delimitadores)
+
+                    if (splitter1.size < 2)
+                        return;
+
+                    if (splitter1[0].isNullOrEmpty() || splitter1[1].isNullOrEmpty()) {
+                        return;
+                    }
+
                     val parte1 = splitter1[0].toDouble()
                     val parte2 = splitter1[1].toDouble()
 
-
-
-                    for (char in entradas){
-                        when (char) {
-                            '+' -> {
-                                entradas = ""
-                                entradas += resultado(parte1, parte2, char)
-                            }
-                            '-' -> {
-                                entradas = ""
-                                entradas += resultado(parte1, parte2, char)
-                            }
-                            '*' -> {
-                                entradas = ""
-                                entradas += resultado(parte1, parte2, char)
+                    for (symboloEnCalculadora in entradas){
+                        entradas = when (symboloEnCalculadora) {
+                            '+', '-', '*' -> {
+                                resultado(parte1, parte2, symboloEnCalculadora).toString()
                             }
                             '/' -> {
-                                entradas = ""
-                                var res = resultado(parte1, parte2, char)
-                                if (res != null){
-                                    if (tieneDecimales(res)){
-                                        entradas += res.toString().take(4).toDouble()
-                                    }else {
-                                        entradas += res
+                                val res = resultado(parte1, parte2, symboloEnCalculadora)
+                                if (res != null) {
+                                    if (tieneDecimales(res)) {
+                                        res.toString().take(4).toDouble().toString()
+                                    } else {
+                                        res.toString()
                                     }
+                                } else {
+                                    return;
                                 }
                             }
+                            else -> entradas
                         }
                     }
-
-
                 }
 
                 Column(
@@ -259,23 +240,10 @@ class MainActivity : ComponentActivity() {
                             Button(
                                 onClick = {
 
-                                    when {
-                                        entradas == "" -> entradas == ""
-                                        entradas.isNotEmpty() -> calculadora()
-
-                                        else -> entradas += ""
+                                    if (entradas != ""){
+                                       calculadora()
                                     }
 
-
-                                    // quiero guardar este comentario.
-                                    // git add .
-                                    // git commit -m "esto es el comentario del commit"
-                                    // git status se usa para ver el estado actual
-
-                                    // comando para volver al ultimo estado guardado:
-                                    // git reset --hard
-
-                                    // Hi2
                                 }
                             ) {
                                 Text(text = "=")
