@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.calculadora.ui.theme.CalculadoraTheme
+import java.lang.ArithmeticException
 
 
 class MainActivity : ComponentActivity() {
@@ -35,54 +36,63 @@ class MainActivity : ComponentActivity() {
 
                 // esto es un comentario de prueba.
                 val delimitadores = arrayOf("+", "-", "*", "/")
-                val caracteres = charArrayOf('+', '-', '*', '/')
 
                 fun tieneDecimales(numero: Double): Boolean {
                     return numero % 1 != 0.0
                 }
 
-                fun resultado (numero1: Double, numero2: Double, simbol: Char): Double? {
+                fun resultado(numero1: Double, numero2: Double, simbol: Char): Double? {
 
-                    var operator = when (simbol) {
-                        '+' -> numero1 + numero2
-                        '-' -> numero1 - numero2
-                        '*' -> numero1 * numero2
-                        '/' -> numero1 / numero2
-                        else -> {
-                            println("chupala justin")
-                            null
+                    return try {
+                        when (simbol) {
+                            '+' -> numero1 + numero2
+                            '-' -> numero1 - numero2
+                            '*' -> numero1 * numero2
+                            '/' -> numero1 / numero2
+                            else -> {
+                                println("chupala justin")
+                                null
+                            }
                         }
-
+                    } catch (e: ArithmeticException) {
+                        null
                     }
-                    return operator
                 }
 
+                fun procesos(negativo: Boolean = false) {
 
-
-                fun calculadora(){
-                    val spliter = entradas
-                    val splitter1 = spliter.split(*delimitadores)
+                    val splitter1 = entradas.split(*delimitadores)
 
                     if (splitter1.size < 2)
                         return;
+
 
                     if (splitter1[0].isNullOrEmpty() || splitter1[1].isNullOrEmpty()) {
                         return;
                     }
 
-                    val parte1 = splitter1[0].toDouble()
+                    var parte1 = splitter1[0].toDouble()
                     val parte2 = splitter1[1].toDouble()
 
-                    for (symboloEnCalculadora in entradas){
+                    if (negativo) parte1 = -parte1
+
+                    for (symboloEnCalculadora in entradas) {
+
                         entradas = when (symboloEnCalculadora) {
                             '+', '-', '*' -> {
                                 resultado(parte1, parte2, symboloEnCalculadora).toString()
                             }
+
                             '/' -> {
+                                if (parte2 == 0.0) {
+                                    entradas = "Chupala no se puede dividir entre 0"
+                                    return;
+                                }
                                 val res = resultado(parte1, parte2, symboloEnCalculadora)
                                 if (res != null) {
                                     if (tieneDecimales(res)) {
                                         res.toString().take(4).toDouble().toString()
+
                                     } else {
                                         res.toString()
                                     }
@@ -90,8 +100,32 @@ class MainActivity : ComponentActivity() {
                                     return;
                                 }
                             }
+
                             else -> entradas
                         }
+                    }
+                }
+
+                fun checkOperators(entradas: String, pressedOperator: Char): String {
+                    if (entradas.isEmpty() && pressedOperator != '-') {
+                        return "";
+                    } else if (entradas.isNotEmpty() && entradas.last() === '-' && entradas.length === 1) {
+                        return entradas;
+                    } else if (entradas.isNotEmpty() && entradas.last() !in setOf('/', '+', '-', '*')) {
+                        return entradas + pressedOperator;
+                    } else {
+                        return entradas.dropLast(1) + pressedOperator;
+                    }
+                }
+
+                fun calculadora() {
+
+                    if (entradas.startsWith('-')) {
+                        entradas = entradas.substring(1)
+                        procesos(true)
+
+                    } else {
+                        procesos()
                     }
                 }
 
@@ -172,7 +206,7 @@ class MainActivity : ComponentActivity() {
                                 Text(text = "3")
                             }
                             Button(
-                                    onClick = { entradas = "" }
+                                onClick = { entradas = "" }
                             ) {
                                 Text(text = "C")
                             }
@@ -194,7 +228,9 @@ class MainActivity : ComponentActivity() {
                                 Text(text = "6")
                             }
                             Button(
-                                onClick = { if (entradas.isNotEmpty()) entradas += "*" }
+                                onClick = {
+                                    entradas = checkOperators(entradas, '*');
+                                }
                             ) {
                                 Text(text = "*")
                             }
@@ -216,32 +252,38 @@ class MainActivity : ComponentActivity() {
                                 Text(text = "9")
                             }
                             Button(
-                                onClick = { if (entradas.isNotEmpty()) entradas += "/" }
+                                onClick = {
+                                    entradas = checkOperators(entradas, '/');
+                                }
                             ) {
                                 Text(text = "/")
                             }
                         }
                         Row(modifier = Modifier.background(color = Color.LightGray)) {
                             Button(
-                                onClick = {if (entradas.isNotEmpty()) entradas += "+" }
+                                onClick = {
+                                    entradas = checkOperators(entradas, '+');
+                                }
                             ) {
                                 Text(text = "+")
                             }
                             Button(
-                                onClick = {if (entradas.isNotEmpty()) entradas += "0"}
+                                onClick = { if (entradas.isNotEmpty()) entradas += "0" }
                             ) {
                                 Text(text = "0")
                             }
                             Button(
-                                onClick = {if (entradas.isNotEmpty()) entradas += "-"}
+                                onClick = {
+                                    entradas = checkOperators(entradas, '-');
+                                }
                             ) {
                                 Text(text = "-")
                             }
                             Button(
                                 onClick = {
 
-                                    if (entradas != ""){
-                                       calculadora()
+                                    if (entradas != "") {
+                                        calculadora()
                                     }
 
                                 }
